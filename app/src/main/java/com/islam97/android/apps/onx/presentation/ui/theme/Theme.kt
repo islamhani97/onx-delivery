@@ -1,4 +1,4 @@
-package com.islam97.android.apps.onx.ui.theme
+package com.islam97.android.apps.onx.presentation.ui.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
