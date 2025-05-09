@@ -16,7 +16,9 @@ import com.islam97.android.apps.onx.presentation.orders.RouteOrdersScreen
 import com.islam97.android.apps.onx.presentation.splash.RouteSplashScreen
 import com.islam97.android.apps.onx.presentation.splash.SplashScreen
 import com.islam97.android.apps.onx.presentation.ui.theme.ONXTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

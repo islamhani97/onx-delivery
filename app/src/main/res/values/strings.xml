@@ -6,6 +6,9 @@
     <string name="title_login">Welcome Back!</string>
     <!--Messages-->
     <string name="message_login">Log back into your account</string>
+    <string name="message_success">Success</string>
+    <!--Errors-->
+    <string name="error_something_went_wrong">Something went wrong</string>
     <!--Placeholders-->
     <string name="placeholder_user_id">User ID</string>
     <string name="placeholder_password">Password</string>
