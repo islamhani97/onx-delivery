@@ -2,7 +2,7 @@ package com.islam97.android.apps.onx.domain.usecases
 
 import com.islam97.android.apps.onx.domain.models.LoginRequest
 import com.islam97.android.apps.onx.domain.repositories.AppRepository
-import com.islam97.android.apps.onx.presentation.Result
+import com.islam97.android.apps.onx.presentation.utils.Result
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

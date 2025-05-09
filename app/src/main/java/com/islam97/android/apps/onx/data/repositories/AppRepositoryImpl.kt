@@ -5,7 +5,7 @@ import com.islam97.android.apps.onx.data.dto.toModel
 import com.islam97.android.apps.onx.data.remote.RemoteApi
 import com.islam97.android.apps.onx.domain.models.LoginRequest
 import com.islam97.android.apps.onx.domain.repositories.AppRepository
-import com.islam97.android.apps.onx.presentation.Result
+import com.islam97.android.apps.onx.presentation.utils.Result
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton

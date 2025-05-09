@@ -1,4 +1,4 @@
-package com.islam97.android.apps.onx.presentation
+package com.islam97.android.apps.onx.presentation.utils
 
 sealed class Result {
     data object Loading : Result()

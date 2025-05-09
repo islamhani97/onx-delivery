@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.islam97.android.apps.onx.domain.models.LoginRequest
 import com.islam97.android.apps.onx.domain.usecases.LoginUseCase
-import com.islam97.android.apps.onx.presentation.Result
+import com.islam97.android.apps.onx.presentation.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

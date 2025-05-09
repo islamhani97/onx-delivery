@@ -4,7 +4,7 @@ import android.content.Context
 import com.google.gson.Gson
 import com.islam97.android.apps.onx.R
 import com.islam97.android.apps.onx.data.dto.Response
-import com.islam97.android.apps.onx.presentation.Result
+import com.islam97.android.apps.onx.presentation.utils.Result
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
