@@ -55,83 +55,89 @@ fun OrderItem(modifier: Modifier = Modifier, order: Order) {
                 style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.appColorScheme.neutralDark)
             )
 
-            OrderItemField(modifier = Modifier
-                .constrainAs(statusReference) {
-                    top.linkTo(parent.top)
-                    start.linkTo(parent.start)
-                    end.linkTo(statusDividerReference.start)
-                    bottom.linkTo(parent.bottom)
-                }
-                .fillMaxWidth(0.27f)
-                .padding(vertical = 20.dp),
+            OrderItemField(
+                modifier = Modifier
+                    .constrainAs(statusReference) {
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start)
+                        end.linkTo(statusDividerReference.start)
+                        bottom.linkTo(parent.bottom)
+                    }
+                    .fillMaxWidth(0.27f)
+                    .padding(vertical = 20.dp),
                 stringResource(R.string.status),
                 stringResource(order.status.textResourceId),
                 statusColor)
 
-            VerticalDivider(modifier = Modifier
-                .constrainAs(statusDividerReference) {
-                    top.linkTo(parent.top)
-                    start.linkTo(statusReference.end)
-                    end.linkTo(totalPriceReference.start)
-                    bottom.linkTo(parent.bottom)
-                    height = Dimension.fillToConstraints
-                }
-                .width(2.dp)
-                .padding(vertical = 8.dp),
+            VerticalDivider(
+                modifier = Modifier
+                    .constrainAs(statusDividerReference) {
+                        top.linkTo(parent.top)
+                        start.linkTo(statusReference.end)
+                        end.linkTo(totalPriceReference.start)
+                        bottom.linkTo(parent.bottom)
+                        height = Dimension.fillToConstraints
+                    }
+                    .width(2.dp)
+                    .padding(vertical = 8.dp),
                 color = MaterialTheme.appColorScheme.neutral)
 
-            OrderItemField(modifier = Modifier
-                .constrainAs(totalPriceReference) {
-                    top.linkTo(parent.top)
-                    start.linkTo(statusDividerReference.end)
-                    end.linkTo(totalPriceDividerReference.start)
-                    bottom.linkTo(parent.bottom)
-                }
-                .fillMaxWidth(0.27f)
-                .padding(vertical = 20.dp),
+            OrderItemField(
+                modifier = Modifier
+                    .constrainAs(totalPriceReference) {
+                        top.linkTo(parent.top)
+                        start.linkTo(statusDividerReference.end)
+                        end.linkTo(totalPriceDividerReference.start)
+                        bottom.linkTo(parent.bottom)
+                    }
+                    .fillMaxWidth(0.27f)
+                    .padding(vertical = 20.dp),
                 stringResource(R.string.total_price),
                 order.totalPrice,
                 MaterialTheme.appColorScheme.primary)
 
-            VerticalDivider(modifier = Modifier
-                .constrainAs(totalPriceDividerReference) {
-                    top.linkTo(parent.top)
-                    start.linkTo(totalPriceDividerReference.end)
-                    end.linkTo(dateReference.start)
-                    bottom.linkTo(parent.bottom)
-                    height = Dimension.fillToConstraints
-                }
-                .width(2.dp)
-                .padding(vertical = 8.dp),
+            VerticalDivider(
+                modifier = Modifier
+                    .constrainAs(totalPriceDividerReference) {
+                        top.linkTo(parent.top)
+                        start.linkTo(totalPriceDividerReference.end)
+                        end.linkTo(dateReference.start)
+                        bottom.linkTo(parent.bottom)
+                        height = Dimension.fillToConstraints
+                    }
+                    .width(2.dp)
+                    .padding(vertical = 8.dp),
                 color = MaterialTheme.appColorScheme.neutral)
 
-            OrderItemField(modifier = Modifier
-                .constrainAs(dateReference) {
-                    top.linkTo(parent.top)
-                    start.linkTo(totalPriceDividerReference.end)
-                    end.linkTo(orderDetailsButtonReference.start)
-                    bottom.linkTo(parent.bottom)
-                }
-                .fillMaxWidth(0.27f)
-                .padding(vertical = 20.dp),
+            OrderItemField(
+                modifier = Modifier
+                    .constrainAs(dateReference) {
+                        top.linkTo(parent.top)
+                        start.linkTo(totalPriceDividerReference.end)
+                        end.linkTo(orderDetailsButtonReference.start)
+                        bottom.linkTo(parent.bottom)
+                    }
+                    .fillMaxWidth(0.27f)
+                    .padding(vertical = 20.dp),
                 stringResource(R.string.date),
                 order.date,
                 MaterialTheme.appColorScheme.primary)
-            Column(modifier = Modifier
-                .constrainAs(orderDetailsButtonReference) {
-                    top.linkTo(parent.top)
-                    start.linkTo(dateReference.end)
-                    end.linkTo(parent.end)
-                    bottom.linkTo(parent.bottom)
-                    height = Dimension.fillToConstraints
-                }
-                .fillMaxWidth(0.19f)
-                .background(statusColor),
+            Column(
+                modifier = Modifier
+                    .constrainAs(orderDetailsButtonReference) {
+                        top.linkTo(parent.top)
+                        start.linkTo(dateReference.end)
+                        end.linkTo(parent.end)
+                        bottom.linkTo(parent.bottom)
+                        height = Dimension.fillToConstraints
+                    }
+                    .fillMaxWidth(0.19f)
+                    .background(statusColor),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center) {
                 Text(
                     modifier = Modifier,
-                    text = "order\ndetails",
+                    text = stringResource(R.string.order_details),
                     style = MaterialTheme.typography.bodySmall.copy(
                         color = MaterialTheme.appColorScheme.white, textAlign = TextAlign.Center
                     )

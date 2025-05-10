@@ -48,10 +48,12 @@ import androidx.navigation.navOptions
 import androidx.navigation.toRoute
 import com.islam97.android.apps.onx.R
 import com.islam97.android.apps.onx.domain.models.Order
+import com.islam97.android.apps.onx.presentation.language.Language
 import com.islam97.android.apps.onx.presentation.login.RouteLoginScreen
 import com.islam97.android.apps.onx.presentation.ui.composeables.CustomSingleChoiceSegmentedRow
 import com.islam97.android.apps.onx.presentation.ui.theme.appColorScheme
 import com.islam97.android.apps.onx.presentation.utils.Result
+import com.islam97.android.apps.onx.presentation.utils.respectLanguage
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -65,7 +67,12 @@ data class RouteOrdersScreen(val deliveryId: String, val userName: String)
 
 @Suppress("UNCHECKED_CAST")
 @Composable
-fun OrdersScreen(navController: NavHostController, backStackEntry: NavBackStackEntry) {
+fun OrdersScreen(
+    navController: NavHostController,
+    backStackEntry: NavBackStackEntry,
+    currentLanguage: Language,
+    onChangeLanguage: () -> Unit
+) {
     val context = LocalContext.current
     val viewModel: OrdersViewModel = hiltViewModel()
     val coroutineScope = rememberCoroutineScope()
@@ -115,7 +122,7 @@ fun OrdersScreen(navController: NavHostController, backStackEntry: NavBackStackE
     }
 
     LaunchedEffect(Unit) {
-        viewModel.getOrders(route.deliveryId, "1", filters[selectedFilterIndex])
+        viewModel.getOrders(route.deliveryId, currentLanguage.number, filters[selectedFilterIndex])
         viewModel.ordersState.collectLatest {
             when (it) {
                 is Result.Loading -> {
@@ -182,18 +189,19 @@ fun OrdersScreen(navController: NavHostController, backStackEntry: NavBackStackE
                     .clip(RoundedCornerShape(50))
                     .background(MaterialTheme.appColorScheme.primary))
 
-            IconButton(modifier = Modifier
-                .constrainAs(languageButtonReference) {
-                    top.linkTo(topBannerReference.top)
-                    end.linkTo(topBannerReference.end)
-                    bottom.linkTo(topBannerReference.bottom)
-                }
+            IconButton(
+                modifier = Modifier
+                    .constrainAs(languageButtonReference) {
+                        top.linkTo(topBannerReference.top)
+                        end.linkTo(topBannerReference.end)
+                        bottom.linkTo(topBannerReference.bottom)
+                    }
 
-                .padding(end = 16.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(MaterialTheme.appColorScheme.white)
-                .size(32.dp), onClick = {
-
+                    .padding(end = 16.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(MaterialTheme.appColorScheme.white)
+                    .size(32.dp), onClick = {
+                onChangeLanguage()
             }) {
                 Icon(
                     modifier = Modifier.size(20.dp),
@@ -202,15 +210,16 @@ fun OrdersScreen(navController: NavHostController, backStackEntry: NavBackStackE
                     tint = MaterialTheme.appColorScheme.primary
                 )
             }
-            Text(modifier = Modifier
-                .constrainAs(userNameReference) {
-                    top.linkTo(topBannerReference.top)
-                    start.linkTo(topBannerReference.start)
-                    bottom.linkTo(topBannerReference.bottom)
-                    width = Dimension.percent(0.5f)
-                    verticalBias = 0.6f
-                }
-                .padding(start = 16.dp),
+            Text(
+                modifier = Modifier
+                    .constrainAs(userNameReference) {
+                        top.linkTo(topBannerReference.top)
+                        start.linkTo(topBannerReference.start)
+                        bottom.linkTo(topBannerReference.bottom)
+                        width = Dimension.percent(0.5f)
+                        verticalBias = 0.6f
+                    }
+                    .padding(start = 16.dp),
                 text = route.userName,
                 style = MaterialTheme.typography.headlineLarge.copy(color = MaterialTheme.appColorScheme.white))
             Icon(
@@ -218,7 +227,7 @@ fun OrdersScreen(navController: NavHostController, backStackEntry: NavBackStackE
                     start.linkTo(topBannerReference.start)
                     end.linkTo(topBannerReference.end)
                     bottom.linkTo(topBannerReference.bottom)
-                    horizontalBias = 0.75f
+                    horizontalBias = 0.75f.respectLanguage(currentLanguage)
                 },
                 painter = painterResource(id = R.mipmap.ic_delivery_man),
                 contentDescription = "",
@@ -239,7 +248,9 @@ fun OrdersScreen(navController: NavHostController, backStackEntry: NavBackStackE
                 selectedOptionIndex = selectedFilterIndex
             ) {
                 selectedFilterIndex = it
-                viewModel.getOrders(route.deliveryId, "1", filters[selectedFilterIndex])
+                viewModel.getOrders(
+                    route.deliveryId, currentLanguage.number, filters[selectedFilterIndex]
+                )
 
             }
 
@@ -305,6 +316,7 @@ fun OrdersScreen(navController: NavHostController, backStackEntry: NavBackStackE
 fun PreviewOrdersScreen() {
     OrdersScreen(
         navController = NavHostController(LocalContext.current),
-        backStackEntry = NavHostController(LocalContext.current).currentBackStackEntry!!
-    )
+        backStackEntry = NavHostController(LocalContext.current).currentBackStackEntry!!,
+        currentLanguage = Language.ARABIC,
+        onChangeLanguage = {})
 }

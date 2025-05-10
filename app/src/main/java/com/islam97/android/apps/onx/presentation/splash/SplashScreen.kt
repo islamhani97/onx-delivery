@@ -8,34 +8,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.navigation.NavHostController
-import androidx.navigation.navOptions
 import com.islam97.android.apps.onx.R
-import com.islam97.android.apps.onx.presentation.login.RouteLoginScreen
 import com.islam97.android.apps.onx.presentation.ui.theme.appColorScheme
-import kotlinx.coroutines.delay
-import kotlinx.serialization.Serializable
-
-@Serializable
-object RouteSplashScreen
 
 @Composable
-fun SplashScreen(navController: NavHostController) {
-    LaunchedEffect(Unit) {
-        delay(2000)
-        navController.navigate(RouteLoginScreen, navOptions {
-            popUpTo(
-                RouteSplashScreen
-            ) { inclusive = true }
-        })
-    }
+fun SplashScreen() {
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         ConstraintLayout(
             modifier = Modifier
@@ -91,5 +73,5 @@ fun SplashScreen(navController: NavHostController) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewSplashScreen() {
-    SplashScreen(navController = NavHostController(LocalContext.current))
+    SplashScreen()
 }

@@ -42,11 +42,13 @@ import androidx.navigation.navOptions
 import com.islam97.android.apps.onx.R
 import com.islam97.android.apps.onx.domain.models.LoginRequest
 import com.islam97.android.apps.onx.domain.models.User
+import com.islam97.android.apps.onx.presentation.language.Language
 import com.islam97.android.apps.onx.presentation.orders.RouteOrdersScreen
 import com.islam97.android.apps.onx.presentation.ui.composeables.CustomButton
 import com.islam97.android.apps.onx.presentation.ui.composeables.CustomTextField
 import com.islam97.android.apps.onx.presentation.ui.theme.appColorScheme
 import com.islam97.android.apps.onx.presentation.utils.Result
+import com.islam97.android.apps.onx.presentation.utils.respectLanguage
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.serialization.Serializable
 
@@ -54,13 +56,17 @@ import kotlinx.serialization.Serializable
 object RouteLoginScreen
 
 @Composable
-fun LoginScreen(navController: NavHostController) {
+fun LoginScreen(
+    navController: NavHostController,
+    currentLanguage: Language,
+    onChangeLanguage: () -> Unit
+) {
 
     val context = LocalContext.current
     val viewModel: LoginViewModel = hiltViewModel()
     var isLoading by remember { mutableStateOf(false) }
-    var userIdState by remember { mutableStateOf("1010") }
-    var passwordState by remember { mutableStateOf("1") }
+    var userIdState by remember { mutableStateOf("") }
+    var passwordState by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         viewModel.loginState.collectLatest {
@@ -137,7 +143,7 @@ fun LoginScreen(navController: NavHostController) {
                             end.linkTo(parent.end)
                             bottom.linkTo(topGuideline)
                             width = Dimension.percent(0.5f)
-                            horizontalBias = 0f
+                            horizontalBias = 0f.respectLanguage(currentLanguage)
                             verticalBias = 1f
                         }
                         .padding(top = 16.dp, start = 16.dp),
@@ -151,7 +157,9 @@ fun LoginScreen(navController: NavHostController) {
                             end.linkTo(parent.end)
                             bottom.linkTo(topGuideline)
                         }
-                        .padding(end = 16.dp), onClick = {}) {
+                        .padding(end = 16.dp), onClick = {
+                        onChangeLanguage()
+                    }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_language),
                         contentDescription = "",
@@ -251,7 +259,7 @@ fun LoginScreen(navController: NavHostController) {
                         .padding(top = 16.dp), onClick = {
                         viewModel.login(
                             request = LoginRequest(
-                                languageNumber = "1",
+                                languageNumber = currentLanguage.number,
                                 deliveryNumber = userIdState,
                                 password = passwordState
                             )
@@ -270,5 +278,8 @@ fun LoginScreen(navController: NavHostController) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewLoginScreen() {
-    LoginScreen(navController = NavHostController(LocalContext.current))
+    LoginScreen(
+        navController = NavHostController(LocalContext.current),
+        currentLanguage = Language.ARABIC,
+        onChangeLanguage = {})
 }

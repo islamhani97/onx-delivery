@@ -12,9 +12,13 @@
     <string name="order_status_delivering">Delivering</string>
     <string name="order_status_delivered">Delivered</string>
     <string name="order_status_returned">Returned</string>
+    <string name="language_english">English</string>
+    <string name="language_arabic">العربية</string>
+    <string name="apply">Apply</string>
     <!--Titles-->
     <string name="title_login">Welcome Back!</string>
     <string name="title_no_orders">No orders yet</string>
+    <string name="title_choose_language">Choose Language</string>
     <!--Messages-->
     <string name="message_login">Log back into your account</string>
     <string name="message_success">Success</string>
