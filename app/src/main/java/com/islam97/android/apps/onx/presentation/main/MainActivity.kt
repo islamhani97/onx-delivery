@@ -40,7 +40,7 @@ fun MainNavigation() {
         }
 
         composable<RouteOrdersScreen> {
-            OrdersScreen(navController)
+            OrdersScreen(navController, it)
         }
     }
 }

@@ -5,6 +5,13 @@
     <string name="status">Status</string>
     <string name="total_price">Total price</string>
     <string name="date">Date</string>
+    <string name="order_details">Order\nDetails</string>
+    <string name="order_filter_new">New</string>
+    <string name="order_filter_others">Others</string>
+    <string name="order_status_new">New</string>
+    <string name="order_status_delivering">Delivering</string>
+    <string name="order_status_delivered">Delivered</string>
+    <string name="order_status_returned">Returned</string>
     <!--Titles-->
     <string name="title_login">Welcome Back!</string>
     <string name="title_no_orders">No orders yet</string>

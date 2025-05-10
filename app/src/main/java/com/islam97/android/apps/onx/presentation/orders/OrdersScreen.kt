@@ -17,35 +17,73 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
+import androidx.navigation.toRoute
 import com.islam97.android.apps.onx.R
+import com.islam97.android.apps.onx.domain.models.Order
 import com.islam97.android.apps.onx.presentation.ui.composeables.CustomSingleChoiceSegmentedRow
 import com.islam97.android.apps.onx.presentation.ui.theme.appColorScheme
+import com.islam97.android.apps.onx.presentation.utils.Result
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.serialization.Serializable
 
 @Serializable
-object RouteOrdersScreen
+data class RouteOrdersScreen(val deliveryId: String, val userName: String)
 
+@Suppress("UNCHECKED_CAST")
 @Composable
-fun OrdersScreen(navController: NavHostController) {
-
+fun OrdersScreen(navController: NavHostController, backStackEntry: NavBackStackEntry) {
     val viewModel: OrdersViewModel = hiltViewModel()
     var isLoading by remember { mutableStateOf(false) }
+    var orders by remember { mutableStateOf(listOf<Order>()) }
+
+    val filters = OrdersFilter.entries.toList()
+    var selectedFilterIndex by remember { mutableIntStateOf(0) }
+
+    val route = backStackEntry.toRoute<RouteOrdersScreen>()
+
+    LaunchedEffect(Unit) {
+        viewModel.getOrders(route.deliveryId, "1", filters[selectedFilterIndex])
+        viewModel.ordersState.collectLatest {
+            when (it) {
+                is Result.Loading -> {
+                    isLoading = true
+                }
+
+                is Result.Success<*> -> {
+                    isLoading = false
+                    orders = it.data as List<Order>
+                }
+
+                is Result.Error -> {
+                    isLoading = false
+                }
+
+                else -> {
+                    isLoading = false
+                }
+            }
+        }
+    }
 
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         ConstraintLayout(
@@ -110,7 +148,7 @@ fun OrdersScreen(navController: NavHostController) {
                         verticalBias = 0.6f
                     }
                     .padding(start = 16.dp),
-                text = "",
+                text = route.userName,
                 style = MaterialTheme.typography.headlineLarge.copy(color = MaterialTheme.appColorScheme.white))
             Icon(
                 modifier = Modifier.constrainAs(deliveryManReference) {
@@ -124,49 +162,76 @@ fun OrdersScreen(navController: NavHostController) {
                 tint = Color.Unspecified
             )
 
-            if (isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .constrainAs(
-                            loadingIndicatorReference
-                        ) {
-                            top.linkTo(parent.top)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                            bottom.linkTo(parent.bottom)
-                        }
-                        .size(60.dp))
-            } else {
-                val filters = listOf("", "")
-                var selectedFilterIndex by remember { mutableIntStateOf(0) }
-                CustomSingleChoiceSegmentedRow(
-                    modifier = Modifier
-                        .constrainAs(
-                            filterReference
-                        ) {
-                            top.linkTo(topBannerReference.bottom)
-                            start.linkTo(topBannerReference.start)
-                            end.linkTo(topBannerReference.end)
-                        }
-                        .padding(16.dp),
-                    options = filters,
-                    selectedOptionIndex = selectedFilterIndex) {
-                    selectedFilterIndex = it
+            CustomSingleChoiceSegmentedRow(
+                modifier = Modifier
+                    .constrainAs(
+                        filterReference
+                    ) {
+                        top.linkTo(topBannerReference.bottom)
+                        start.linkTo(topBannerReference.start)
+                        end.linkTo(topBannerReference.end)
+                    }
+                    .padding(16.dp),
+                options = filters.map { stringResource(it.textResourceId) },
+                selectedOptionIndex = selectedFilterIndex
+            ) {
+                selectedFilterIndex = it
+                viewModel.getOrders("1010", "1", filters[selectedFilterIndex])
+
+            }
+
+            when {
+                isLoading -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .constrainAs(
+                                loadingIndicatorReference
+                            ) {
+                                top.linkTo(parent.top)
+                                start.linkTo(parent.start)
+                                end.linkTo(parent.end)
+                                bottom.linkTo(parent.bottom)
+                            }
+                            .size(60.dp))
                 }
 
-                LazyColumn(
-                    modifier = Modifier
-                        .constrainAs(
-                            ordersListReference
+                orders.isEmpty() -> {
+                    OrdersEmptyView(
+                        modifier = Modifier.constrainAs(
+                            emptyViewReference
                         ) {
-                            top.linkTo(filterReference.bottom)
+                            top.linkTo(topBannerReference.bottom)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
                             bottom.linkTo(parent.bottom)
-                            height = Dimension.fillToConstraints
+                        })
+                }
+
+                else -> {
+                    LazyColumn(
+                        modifier = Modifier
+                            .constrainAs(
+                                ordersListReference
+                            ) {
+                                top.linkTo(filterReference.bottom)
+                                start.linkTo(parent.start)
+                                end.linkTo(parent.end)
+                                bottom.linkTo(parent.bottom)
+                                height = Dimension.fillToConstraints
+                            }
+                            .fillMaxWidth()
+                            .padding(top = 16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally) {
+                        items(orders.size) { index ->
+                            OrderItem(
+                                modifier = Modifier
+                                    .fillMaxWidth(0.95f)
+                                    .padding(top = if (index != 0) 12.dp else 0.dp),
+                                order = orders[index]
+                            )
                         }
-                        .fillMaxWidth()
-                        .padding(top = 16.dp)) {}
+                    }
+                }
             }
         }
     }
@@ -175,5 +240,8 @@ fun OrdersScreen(navController: NavHostController) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewOrdersScreen() {
-    OrdersScreen(navController = NavHostController(LocalContext.current))
+    OrdersScreen(
+        navController = NavHostController(LocalContext.current),
+        backStackEntry = NavHostController(LocalContext.current).currentBackStackEntry!!
+    )
 }

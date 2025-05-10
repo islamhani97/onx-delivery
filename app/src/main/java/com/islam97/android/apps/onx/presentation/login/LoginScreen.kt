@@ -41,6 +41,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.navOptions
 import com.islam97.android.apps.onx.R
 import com.islam97.android.apps.onx.domain.models.LoginRequest
+import com.islam97.android.apps.onx.domain.models.User
 import com.islam97.android.apps.onx.presentation.orders.RouteOrdersScreen
 import com.islam97.android.apps.onx.presentation.ui.composeables.CustomButton
 import com.islam97.android.apps.onx.presentation.ui.composeables.CustomTextField
@@ -71,11 +72,14 @@ fun LoginScreen(navController: NavHostController) {
                 is Result.Success<*> -> {
                     Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
                     isLoading = true
-                    navController.navigate(RouteOrdersScreen, navOptions {
-                        popUpTo(
-                            RouteLoginScreen
-                        ) { inclusive = true }
-                    })
+                    navController.navigate(
+                        RouteOrdersScreen(
+                            deliveryId = userIdState, userName = (it.data as User).name
+                        ), navOptions {
+                            popUpTo(
+                                RouteLoginScreen
+                            ) { inclusive = true }
+                        })
                 }
 
                 is Result.Error -> {

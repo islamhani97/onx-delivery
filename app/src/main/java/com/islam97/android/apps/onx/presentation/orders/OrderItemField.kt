@@ -19,16 +19,16 @@ fun OrderItemField(modifier: Modifier = Modifier, label: String, value: String, 
         Text(
             modifier = Modifier.fillMaxWidth(),
             text = label,
-            style = MaterialTheme.typography.bodyMedium.copy(
+            style = MaterialTheme.typography.bodySmall.copy(
                 color = MaterialTheme.appColorScheme.neutralDark, textAlign = TextAlign.Center
             )
         )
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 8.dp),
+                .padding(top = 4.dp),
             text = value,
-            style = MaterialTheme.typography.titleLarge.copy(
+            style = MaterialTheme.typography.titleMedium.copy(
                 color = valueColor, textAlign = TextAlign.Center
             )
         )
