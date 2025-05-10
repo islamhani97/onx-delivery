@@ -1,3 +1,32 @@
 <resources>
     <string name="app_name">ON X</string>
+    <string name="show_more">Show More</string>
+    <string name="login">Log in</string>
+    <string name="status">Status</string>
+    <string name="total_price">Total price</string>
+    <string name="date">Date</string>
+    <string name="order_details">Order\nDetails</string>
+    <string name="order_filter_new">New</string>
+    <string name="order_filter_others">Others</string>
+    <string name="order_status_new">New</string>
+    <string name="order_status_delivering">Delivering</string>
+    <string name="order_status_delivered">Delivered</string>
+    <string name="order_status_returned">Returned</string>
+    <string name="language_english">English</string>
+    <string name="language_arabic">العربية</string>
+    <string name="apply">Apply</string>
+    <!--Titles-->
+    <string name="title_login">Welcome Back!</string>
+    <string name="title_no_orders">No orders yet</string>
+    <string name="title_choose_language">Choose Language</string>
+    <!--Messages-->
+    <string name="message_login">Log back into your account</string>
+    <string name="message_success">Success</string>
+    <string name="message_no_orders">You don\'t have any orders in your history</string>
+    <string name="message_session_timeout">The session is expired login again, please</string>
+    <!--Errors-->
+    <string name="error_something_went_wrong">Something went wrong</string>
+    <!--Placeholders-->
+    <string name="placeholder_user_id">User ID</string>
+    <string name="placeholder_password">Password</string>
 </resources>
