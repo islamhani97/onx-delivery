@@ -1,5 +1,6 @@
 package com.islam97.android.apps.onx.presentation.orders
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,16 +18,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -35,16 +39,26 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
+import androidx.navigation.navOptions
 import androidx.navigation.toRoute
 import com.islam97.android.apps.onx.R
 import com.islam97.android.apps.onx.domain.models.Order
+import com.islam97.android.apps.onx.presentation.login.RouteLoginScreen
 import com.islam97.android.apps.onx.presentation.ui.composeables.CustomSingleChoiceSegmentedRow
 import com.islam97.android.apps.onx.presentation.ui.theme.appColorScheme
 import com.islam97.android.apps.onx.presentation.utils.Result
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+
+private const val SESSION_TIME_OUT = (2 * 60 * 1000).toLong()
 
 @Serializable
 data class RouteOrdersScreen(val deliveryId: String, val userName: String)
@@ -52,7 +66,10 @@ data class RouteOrdersScreen(val deliveryId: String, val userName: String)
 @Suppress("UNCHECKED_CAST")
 @Composable
 fun OrdersScreen(navController: NavHostController, backStackEntry: NavBackStackEntry) {
+    val context = LocalContext.current
     val viewModel: OrdersViewModel = hiltViewModel()
+    val coroutineScope = rememberCoroutineScope()
+    val lifecycleOwner = LocalLifecycleOwner.current
     var isLoading by remember { mutableStateOf(false) }
     var orders by remember { mutableStateOf(listOf<Order>()) }
 
@@ -60,6 +77,42 @@ fun OrdersScreen(navController: NavHostController, backStackEntry: NavBackStackE
     var selectedFilterIndex by remember { mutableIntStateOf(0) }
 
     val route = backStackEntry.toRoute<RouteOrdersScreen>()
+    var job by remember { mutableStateOf<Job?>(null) }
+
+
+    fun startInactivityTimer() {
+        job?.cancel()
+        job = coroutineScope.launch {
+            delay(SESSION_TIME_OUT)
+            Toast.makeText(
+                context, context.getString(R.string.message_session_timeout), Toast.LENGTH_SHORT
+            ).show()
+            navController.navigate(
+                RouteLoginScreen,
+                navOptions { popUpTo(RouteOrdersScreen("", "")) { inclusive = true } })
+        }
+    }
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_START -> {
+                    startInactivityTimer()
+                }
+
+                Lifecycle.Event.ON_STOP -> {
+                    startInactivityTimer()
+                }
+
+                else -> {}
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+            job?.cancel()
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.getOrders(route.deliveryId, "1", filters[selectedFilterIndex])
@@ -85,7 +138,19 @@ fun OrdersScreen(navController: NavHostController, backStackEntry: NavBackStackE
         }
     }
 
-    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+    Scaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .pointerInput(Unit) {
+                awaitPointerEventScope {
+                    while (true) {
+                        awaitPointerEvent()
+                        startInactivityTimer()
+                    }
+                }
+            }
+
+    ) { innerPadding ->
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxSize()
@@ -117,18 +182,17 @@ fun OrdersScreen(navController: NavHostController, backStackEntry: NavBackStackE
                     .clip(RoundedCornerShape(50))
                     .background(MaterialTheme.appColorScheme.primary))
 
-            IconButton(
-                modifier = Modifier
-                    .constrainAs(languageButtonReference) {
-                        top.linkTo(topBannerReference.top)
-                        end.linkTo(topBannerReference.end)
-                        bottom.linkTo(topBannerReference.bottom)
-                    }
+            IconButton(modifier = Modifier
+                .constrainAs(languageButtonReference) {
+                    top.linkTo(topBannerReference.top)
+                    end.linkTo(topBannerReference.end)
+                    bottom.linkTo(topBannerReference.bottom)
+                }
 
-                    .padding(end = 16.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(MaterialTheme.appColorScheme.white)
-                    .size(32.dp), onClick = {
+                .padding(end = 16.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(MaterialTheme.appColorScheme.white)
+                .size(32.dp), onClick = {
 
             }) {
                 Icon(
@@ -138,16 +202,15 @@ fun OrdersScreen(navController: NavHostController, backStackEntry: NavBackStackE
                     tint = MaterialTheme.appColorScheme.primary
                 )
             }
-            Text(
-                modifier = Modifier
-                    .constrainAs(userNameReference) {
-                        top.linkTo(topBannerReference.top)
-                        start.linkTo(topBannerReference.start)
-                        bottom.linkTo(topBannerReference.bottom)
-                        width = Dimension.percent(0.5f)
-                        verticalBias = 0.6f
-                    }
-                    .padding(start = 16.dp),
+            Text(modifier = Modifier
+                .constrainAs(userNameReference) {
+                    top.linkTo(topBannerReference.top)
+                    start.linkTo(topBannerReference.start)
+                    bottom.linkTo(topBannerReference.bottom)
+                    width = Dimension.percent(0.5f)
+                    verticalBias = 0.6f
+                }
+                .padding(start = 16.dp),
                 text = route.userName,
                 style = MaterialTheme.typography.headlineLarge.copy(color = MaterialTheme.appColorScheme.white))
             Icon(
@@ -176,7 +239,7 @@ fun OrdersScreen(navController: NavHostController, backStackEntry: NavBackStackE
                 selectedOptionIndex = selectedFilterIndex
             ) {
                 selectedFilterIndex = it
-                viewModel.getOrders("1010", "1", filters[selectedFilterIndex])
+                viewModel.getOrders(route.deliveryId, "1", filters[selectedFilterIndex])
 
             }
 

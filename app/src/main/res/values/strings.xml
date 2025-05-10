@@ -19,6 +19,7 @@
     <string name="message_login">Log back into your account</string>
     <string name="message_success">Success</string>
     <string name="message_no_orders">You don\'t have any orders in your history</string>
+    <string name="message_session_timeout">The session is expired login again, please</string>
     <!--Errors-->
     <string name="error_something_went_wrong">Something went wrong</string>
     <!--Placeholders-->
