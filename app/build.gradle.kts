@@ -106,6 +106,9 @@ dependencies {
     // Room
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
+
+    // Datastore
+    implementation(libs.androidx.datastore.preferences)
 }
 
 // Allow references to generated code
